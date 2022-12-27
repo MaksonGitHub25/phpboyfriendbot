@@ -1,1 +1,16 @@
-[{"sender":"Makson_w","chatType":"private","date":"24.12.2022, 13:40:41","chat":473042553,"text":"hello my friend"},{"sender":"Makson_w","chatType":"private","date":"24.12.2022, 19:47:11","chat":473042553,"text":"Hello My niggas"},{"sender":"Makson_w","chatType":"private","date":"24.12.2022, 20:23:08","chat":473042553,"text":"негр"},{"sender":"Makson_w","chatType":"private","date":"24.12.2022, 21:02:47","chat":473042553,"text":"nigga"}]
+[
+  {
+    "sender": "PHPBoyFriendBot",
+    "chatType": "private",
+    "date": "26.12.2022, 12:44:32",
+    "chat": 473042553,
+    "text": "Сообщение успешно сохранено!"
+  },
+  {
+    "sender": "pidoprigora21",
+    "chatType": "supergroup",
+    "date": "26.12.2022, 12:45:00",
+    "chat": -1001764912680,
+    "text": "Оооооой как теперь хорошо"
+  }
+]
