@@ -1,5 +1,6 @@
 const roflArray = require('./assets/rofls');
 const answerForUsers = require('./assets/answerForUsersKtoI');
+const memesLink = require('./assets/memesLink');
 
 require('dotenv').config();
 const fs = require('fs');
@@ -8,7 +9,6 @@ const TelegramBot = require('node-telegram-bot-api');
 const DATABASE_PATH = './database/receiveMessages.json';
 const VARS_PATH = './database/vars.json';
 const URLS_PATH = './database/hwURLs.json';
-const MEMES_FOLDER_PATH = './memes';
 const TOKEN = process.env.TOKEN;
 
 const varsData = fs.readFileSync(VARS_PATH, 'utf-8');
@@ -33,11 +33,11 @@ bot.onText(/^\/meme/, msg => {
   const chatId = msg.chat.id;
   const messageId = msg.message_id;
 
-  const fileAmount = fs.readdirSync(MEMES_FOLDER_PATH).length;
-  const randomNumber = Math.floor(Math.random() * (fileAmount - 1) + 1);
+  const randomNumber = Math.floor(Math.random() * (memesLink.length - 1) + 1);
+  const randomMeme = memesLink[randomNumber];
 
   bot.deleteMessage(chatId, messageId);
-  bot.sendPhoto(chatId, `${MEMES_FOLDER_PATH}/${randomNumber}.jpg`);
+  bot.sendPhoto(chatId, randomMeme);
 });
 
 bot.onText(/^\/ne_umnichai/, msg => {
@@ -55,26 +55,48 @@ bot.onText(/^\/kto_i/, msg => {
   const chatId = msg.chat.id;
   const messageId = msg.message_id;
   const senderUserName = msg.from.username;
+  console.log(msg);
+  const senderFirstName = msg.from.first_name;
 
   const messageForUser = answerForUsers[senderUserName];
 
+  const message =
+    messageForUser !== undefined
+      ? `${senderFirstName} - это ${messageForUser}`
+      : answerForUsers['unknown'];
+
   bot.deleteMessage(chatId, messageId);
-  bot.sendMessage(
-    chatId,
-    messageForUser !== undefined ? messageForUser : answerForUsers['unknown']
-  );
+  bot.sendMessage(chatId, message);
 });
 
 bot.onText(/^\/shock/, msg => {
   const chatId = msg.chat.id;
   const messageId = msg.message_id;
 
-  const replyMessageId = Object.hasOwn(msg, 'reply_to_message')
+  const replyMessageId = msg.hasOwnProperty('reply_to_message')
     ? msg.reply_to_message.message_id
     : undefined;
 
   bot.deleteMessage(chatId, messageId);
   bot.sendMessage(chatId, 'Нихуя себе', {
+    reply_to_message_id: replyMessageId
+  });
+});
+
+bot.onText(/^\/thanks/, msg => {
+  const chatId = msg.chat.id;
+  const messageId = msg.message_id;
+
+  const replyMessageId = msg.hasOwnProperty('reply_to_message')
+    ? msg.reply_to_message.message_id
+    : undefined;
+
+  const message = `Ооо, спасибо, ${
+    msg.from.username === 'pidoprigora21' ? 'любимая' : 'любимый'
+  } ❤`;
+
+  bot.deleteMessage(chatId, messageId);
+  bot.sendMessage(chatId, message, {
     reply_to_message_id: replyMessageId
   });
 });
@@ -303,7 +325,7 @@ bot.onText(/\/add_new_link/, async msg => {
   const messageId = msg.message_id;
   const replyMessage = msg.reply_to_message;
 
-  if (!Object.hasOwn(msg, 'reply_to_message')) {
+  if (!msg.hasOwnProperty('reply_to_message')) {
     bot.deleteMessage(chatId, messageId);
     bot.sendMessage(
       chatId,
@@ -314,10 +336,10 @@ bot.onText(/\/add_new_link/, async msg => {
   }
 
   let lessonName = 'Без названия';
-  if (Object.hasOwn(replyMessage, 'caption')) {
+  if (replyMessage.hasOwnProperty('caption')) {
     lessonName = replyMessage.caption.slice(0, 30);
   } else if (
-    !Object.hasOwn(replyMessage, 'caption') &&
+    !replyMessage.hasOwnProperty('caption') &&
     replyMessage.text !== undefined
   ) {
     lessonName = replyMessage.text.slice(0, 30);
